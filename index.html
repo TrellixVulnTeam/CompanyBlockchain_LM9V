@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blockchain for good of employees</title>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=description content="This is a demo website to show one feature, that is, add a company to smart contract...THere is lot more you can do with this software.">
+    <meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#0288d1">
+    <meta name="msapplication-TileColor" content="#0288d1">
+    <meta name="msapplication-TileImage" content="./images/icons/mstile-150x150.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Company BlockChain(To bring democracy in employment decision and even firing)">
+    <meta name="application-name" content="Company BlockChain(To bring democracy in employment decision and even firing)">
+    <link rel="apple-touch-icon" href="./images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="./images/icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="./images/icons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,700">
+    <link rel="stylesheet" href="./css/styles.css">
+  </head>
+  <body>
+  <div class="app app__layout">
+    <header>
+      <span class="header__icon">
+        <svg class="menu__icon no--select" width="24px" height="24px" viewBox="0 0 48 48" fill="#fff">
+          <path d="M6 36h36v-4H6v4zm0-10h36v-4H6v4zm0-14v4h36v-4H6z"></path>
+        </svg>
+      </span>
+
+      <span class="header__title no--select">Democracy in employment decision and even firing</span>
+    </header>
+  <div class="button_query" id="outer">
+<button id = "add_comp" class="inner">Add Company</button>
+<button id = "add_dep" class="inner">Add Department/Branch</button>
+<button id = "add_emp" class="inner">Add Employee</button>
+</div>
+<div class="button_query1" id="outer1">
+<button id = "rem_comp" class="inner">Rem Company</button>
+<button id = "rem_dep" class="inner">Rem Dept/Branch</button>
+<button id = "rem_emp" class="inner">Rem Emp</button>
+</div>
+    <div class="menu">
+      <div class="menu__header"></div>
+      <ul class="menu__list">
+        <li>
+          <button id="google" class="inner">Sign In</button>
+        </li>
+        <li>
+          <button id="googlesignout" class="inner">Sign Out</button>
+        </li>
+      </ul>
+    </div>
+    <div class="menu__overlay"></div>
+
+    <div class="app__content">
+
+      <div class="card">
+        <div class="card__spinner"></div>
+        <div class="card__container">
+          <img alt="avatar" class="card__img" src="">
+          <p class="card__title"></p>
+          <p class="card__desc"></p>
+          <p class="card__temp">
+            <b>Email Verified: </b><span></span>
+          </p>
+          <p class="card__desc" id="fire-uid"></p>
+        </div>
+      </div>
+      <div id="popup1" class="overlay">
+        <div class="popup">
+          <h2>Yo wassup?</h2>
+          
+          <a class="close" href="#">&times;</a>
+          <div class="content">
+            <input id = "item1" type="text" class="add__input" placeholder="Company's name"/>
+            <input id = "item2" type="text" class="add__input" placeholder="Founder's name"/>
+            <input id = "item3" type="text" class="add__input" placeholder="Company's regID"/>
+            <input id = "item4" type="text" class="add__input" placeholder="Number of emp."/>
+            <input id = "item7" type="text" class="add__input" placeholder="Founder's Eth address"/>
+            <input id = "item5" type="text"  class="add__input" placeholder="Message"/>
+            <button id="item6" class="inner">Submit</button>
+            </div>
+            </div>
+        </div>
+<div class="card" id="messages">
+
+  </div>
+  
+    </div>
+  </div>
+
+  <!-- JS Files  -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="popup.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+  <script  src="./js/firebase.js"></script>
+
+    <script src="./js/addtofirebase.js"></script>
+  <script src="./js/main.js"></script>
+  <script src="./js/offline.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script>
+  document.getElementById("google").onclick=function(){
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+  provider.addScope('https://www.googleapis.com/auth/plus.me');
+  firebase.auth().signInWithPopup(provider);
+  }
+  document.getElementById("googlesignout").onclick = function(){
+    document.querySelector('.card').querySelector('.card__img').setAttribute('src', "");
+    firebase.auth().signOut();
+    
+    document.getElementById("google").textContent = 'Si In';
+  }
+  
+  </script>
+  <script>
+  function initApp(){
+    firebase.auth().onAuthStateChanged(function(user){
+      if(user){
+        document.getElementById("google").textContent = 'Signed In';
+        var displayName = user.displayName;
+        var email = user.email;
+        var emailVerified = user.emailVerified;
+        var photoURL = user.photoURL;
+        var isAnonymous = user.isAnonymous;
+        var uid = user.uid;
+        var providerData = user.providerData;
+        var database = firebase.database();
+        database.ref("Validators").once('value').then(function(snapshot){
+    document.querySelector('.card').querySelector('#fire-uid').textContent=snapshot.child("uid").val();
+});
+        document.querySelector('.card').querySelector('.card__img').setAttribute('src', photoURL);
+        document.querySelector('.card').querySelector('.card__title').textContent = displayName;
+        document.querySelector('.card').querySelector('.card__desc').textContent = email;
+        document.querySelector('.card').querySelector('.card__temp span').textContent = emailVerified;
+
+      }else{
+        document.querySelector('.card').querySelector('.card__img').setAttribute('src', "");
+        document.querySelector('.card').querySelector('.card__title').textContent = "Sign in";
+        document.querySelector('.card').querySelector('.card__desc').textContent = "";
+        document.querySelector('.card').querySelector('.card__temp span').textContent = "";
+        document.getElementById("google").textContent = 'Sign In';
+      }
+    });
+  }
+  window.onload = function(){
+    initApp();
+  }
+  </script>
+    <script src="addCompany.js"></script>
+ 
+  <script src="./js/menu.js"></script>
+<script src="./js/app1.js"> </script>
+<script src="./js/web3.min.js"></script>
+    <script src="./js/truffle-contract.js"></script>
+  <!-- My Google Analytics Report -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-92627241-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  </body>
+</html>
